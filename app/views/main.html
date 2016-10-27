@@ -1,1 +1,75 @@
-This is the main view
+<div layout="row" flex>
+  <section id="leftPanel" class="md-whiteframe-2dp" layout="row" flex="33">
+    <md-content layout="column" flex>
+      <md-content layout="column" flex>
+        <md-list>
+          <md-subheader class="md-primary">Running instances</md-subheader>
+          <md-list-item class="md-3-line" ng-class="main.listItemClass(instance)" ng-repeat="instance in main.instances" ng-click="main.selectItem($event, instance)">
+            <md-icon class="md-avatar-icon md-green-500">videogame_asset</md-icon>
+            <div class="md-list-item-text" layout="column">
+              <div layout="row" layout-align="start end">
+                <h3 flex>{{ instance.InstanceId }}</h3>
+                <span class="md-caption">{{instance.LaunchTime.$date | date: 'MMM d h:mm a'}}</span>
+              </div>
+              <h4>{{ instance.InstanceType }}</h4>
+              <p>{{ instance.PublicIpAddress }}</p>
+            </div>
+          </md-list-item>
+
+
+          <md-subheader class="md-primary" ng-if="main.creatingInstances.length > 0">Creating instances</md-subheader>
+          <md-list-item class="md-2-line" ng-class="main.listItemClass(instance)" ng-repeat="instance in main.creatingInstances" ng-click="main.selectItem($event, instance)">
+            <div class="md-loading-icon">
+              <md-progress-circular class="md-accent" md-diameter="48"></md-progress-circular>
+              <md-icon class="md-avatar-icon">videogame_asset</md-icon>
+            </div>
+            <div class="md-list-item-text" layout="column">
+              <div layout="row" layout-align="start end">
+                <h3 flex>{{ instance.InstanceId }}</h3>
+                <span class="md-caption">{{instance.LaunchTime.$date | date: 'MMM d h:mm a'}}</span>
+              </div>
+              <p>{{ instance.Status }}</p>
+            </div>
+          </md-list-item>
+
+          <md-subheader class="md-primary" ng-if="main.deletingInstances.length > 0">Deleting instances</md-subheader>
+          <md-list-item class="md-2-line" ng-class="main.listItemClass(instance)" ng-repeat="instance in main.deletingInstances" ng-click="null">
+            <div class="md-loading-icon">
+              <md-progress-circular class="md-accent" md-diameter="48"></md-progress-circular>
+              <md-icon class="md-avatar-icon">videogame_asset</md-icon>
+            </div>
+            <div class="md-list-item-text" layout="column">
+              <div layout="row" layout-align="start end">
+                <h3 flex>{{ instance.InstanceId }}</h3>
+                <span class="md-caption">{{instance.LaunchTime.$date | date: 'MMM d h:mm a'}}</span>
+              </div>
+              <p>Deleting...</p>
+            </div>
+          </md-list-item>
+        </md-list>
+      </md-content>
+
+      <md-button id="mainFAB" class="md-fab md-accent" aria-label="New instance" ng-click="main.createInstance($event)">
+        <md-tooltip md-direction="top">Create an instance</md-tooltip>
+        <md-icon>add</md-icon>
+      </md-button>
+    </md-content>
+  </section>
+
+  <section flex layout="column" layout-padding>
+    <md-content ng-if="main.selectedInstance" flex>
+      <div layout="row" layout-align="start center">
+        <h1 class="md-headline" flex>{{main.selectedInstance.InstanceId}}</h1>
+        <md-button class="md-icon-button" ng-click="main.deleteInstance($event, main.selectedInstance)">
+          <md-tooltip>Delete instance</md-tooltip>
+          <md-icon>delete</md-icon>
+        </md-button>
+      </div>
+    </md-content>
+
+    <md-content class="no-selected-item-container" ng-if="!main.selectedInstance" flex layout="column" layout-align="center center">
+      <img src="images/aws-logo-black-500px.png" />
+      <h2 class="md-display-1">No instance selected</h2>
+    </md-content>    
+  </section>
+</div>

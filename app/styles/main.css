@@ -9,3 +9,49 @@ body {
   padding: 0;
 }
 
+md-list {
+  padding: 0;
+}
+
+.md-avatar-icon.md-green-500 {
+  background-color: #4CAF50;
+}
+
+#leftPanel {
+  margin-right: 4px;
+}
+
+.md-list-item-text .md-caption {
+  line-height: normal;
+}
+
+md-list-item.selected {
+  border-left: 4px solid #3F51B5;
+  background-color: rgba(63, 81, 181, .2);
+}
+
+.no-selected-item-container img {
+  width: 250px;
+  opacity: .19;
+}
+
+.no-selected-item-container h2 {
+  color: rgba(0, 0, 0, .19);
+}
+
+#mainFAB {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+}
+
+.md-loading-icon {
+  position: relative;
+}
+
+.md-loading-icon md-progress-circular {
+  position: absolute;
+  top: 8px;
+  left: -4px;
+  z-index: 1;
+}
