@@ -30,6 +30,7 @@ module.exports = function(config) {
       'bower_components/angular-sanitize/angular-sanitize.js',
       'bower_components/angular-material/angular-material.js',
       'bower_components/js-crc/build/crc.min.js',
+      'bower_components/angular-poller/angular-poller.min.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'app/scripts/**/*.js',

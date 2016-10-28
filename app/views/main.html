@@ -4,7 +4,7 @@
       <md-content layout="column" flex>
         <md-list>
           <md-subheader class="md-primary">Running instances</md-subheader>
-          <md-list-item class="md-3-line" ng-class="main.listItemClass(instance)" ng-repeat="instance in main.instances" ng-click="main.selectItem($event, instance)">
+          <md-list-item class="md-3-line" ng-class="main.listItemClass(instance)" ng-repeat="instance in main.instances.running | orderBy: '-LaunchTime.$date'" ng-click="main.selectItem($event, instance)">
             <md-icon class="md-avatar-icon md-green-500">videogame_asset</md-icon>
             <div class="md-list-item-text" layout="column">
               <div layout="row" layout-align="start end">
@@ -17,8 +17,8 @@
           </md-list-item>
 
 
-          <md-subheader class="md-primary" ng-if="main.creatingInstances.length > 0">Creating instances</md-subheader>
-          <md-list-item class="md-2-line" ng-class="main.listItemClass(instance)" ng-repeat="instance in main.creatingInstances" ng-click="main.selectItem($event, instance)">
+          <md-subheader class="md-primary" ng-if="main.instances.creating.length > 0">Creating instances</md-subheader>
+          <md-list-item class="md-2-line" ng-class="main.listItemClass(instance)" ng-repeat="instance in main.instances.creating" ng-click="main.selectItem($event, instance)">
             <div class="md-loading-icon">
               <md-progress-circular class="md-accent" md-diameter="48"></md-progress-circular>
               <md-icon class="md-avatar-icon">videogame_asset</md-icon>
@@ -32,8 +32,8 @@
             </div>
           </md-list-item>
 
-          <md-subheader class="md-primary" ng-if="main.deletingInstances.length > 0">Deleting instances</md-subheader>
-          <md-list-item class="md-2-line" ng-class="main.listItemClass(instance)" ng-repeat="instance in main.deletingInstances" ng-click="null">
+          <md-subheader class="md-primary" ng-if="main.instances.deleting.length > 0">Deleting instances</md-subheader>
+          <md-list-item class="md-2-line" ng-class="main.listItemClass(instance)" ng-repeat="instance in main.instances.deleting" ng-click="null">
             <div class="md-loading-icon">
               <md-progress-circular class="md-accent" md-diameter="48"></md-progress-circular>
               <md-icon class="md-avatar-icon">videogame_asset</md-icon>
@@ -44,6 +44,19 @@
                 <span class="md-caption">{{instance.LaunchTime.$date | date: 'MMM d h:mm a'}}</span>
               </div>
               <p>Deleting...</p>
+            </div>
+          </md-list-item>
+
+          <md-subheader class="md-primary" ng-if="main.instances.unknown.length > 0">Unknown state instances</md-subheader>
+          <md-list-item class="md-3-line" ng-class="main.listItemClass(instance)" ng-repeat="instance in main.instances.unknown" ng-click="main.selectItem($event, instance)">
+            <md-icon class="md-avatar-icon">help_outline</md-icon>
+            <div class="md-list-item-text" layout="column">
+              <div layout="row" layout-align="start end">
+                <h3 flex>{{ instance.InstanceId }}</h3>
+                <span class="md-caption">{{instance.LaunchTime.$date | date: 'MMM d h:mm a'}}</span>
+              </div>
+              <h4>{{ instance.InstanceType }}</h4>
+              <p>{{ instance.PublicIpAddress }}</p>
             </div>
           </md-list-item>
         </md-list>
@@ -59,11 +72,58 @@
   <section flex layout="column" layout-padding>
     <md-content ng-if="main.selectedInstance" flex>
       <div layout="row" layout-align="start center">
-        <h1 class="md-headline" flex>{{main.selectedInstance.InstanceId}}</h1>
-        <md-button class="md-icon-button" ng-click="main.deleteInstance($event, main.selectedInstance)">
+        <h1 class="md-headline" flex>Instance #{{main.selectedInstance.InstanceId}}</h1>
+        <md-button class="md-raised md-warn md-icon-button" ng-click="main.deleteInstance($event, main.selectedInstance)">
           <md-tooltip>Delete instance</md-tooltip>
           <md-icon>delete</md-icon>
         </md-button>
+      </div>
+
+      <div layout="column" class="key-value-table">
+        <div layout="row" layout-align="start center" class="key-value-row">
+          <span class="key">State</span>
+          <span class="value">[{{main.selectedInstance.State.Code}}] {{main.selectedInstance.State.Name}}</span>
+        </div>
+
+        <div layout="row" layout-align="start center" class="key-value-row">
+          <span class="key">Launch time</span>
+          <span class="value">{{main.selectedInstance.LaunchTime.$date | date: 'medium'}}</span>
+        </div>
+
+        <div layout="row" layout-align="start center" class="key-value-row">
+          <span class="key">Ip Address</span>
+          <span class="value">{{main.selectedInstance.PublicIpAddress}}</span>
+        </div>
+
+        <div layout="row" layout-align="start center" class="key-value-row">
+          <span class="key">Type</span>
+          <span class="value">{{main.selectedInstance.InstanceType}}</span>
+        </div>
+
+        <div layout="row" layout-align="start center" class="key-value-row">
+          <span class="key">Image ID</span>
+          <span class="value">{{main.selectedInstance.ImageId}}</span>
+        </div>
+
+        <div layout="row" layout-align="start center" class="key-value-row">
+          <span class="key">Lifecycle</span>
+          <span class="value">{{main.selectedInstance.InstanceLifecycle}}</span>
+        </div>
+
+        <div layout="row" layout-align="start center" class="key-value-row">
+          <span class="key">Zone</span>
+          <span class="value">{{main.selectedInstance.Placement.AvailabilityZone}}</span>
+        </div>
+
+        <div layout="row" layout-align="start center" class="key-value-row">
+          <span class="key">Platform</span>
+          <span class="value">{{main.selectedInstance.Platform}}</span>
+        </div>
+      </div>
+
+      <div class="button-bar" layout="row" layout-align="center fill" flex>
+        <md-button class="md-raised" download="{{main.selectedInstance.InstanceId}}.tblk" ng-disabled="true" ng-href="{{ main.getFileURL('vpn') }}"><md-icon>vpn_key</md-icon> Download VPN config</md-button>
+        <md-button class="md-raised" download="{{main.selectedInstance.InstanceId}}.rdp" ng-disabled="main.selectedInstance.State.Code !== 16" ng-href="{{ main.getFileURL('rdp') }}"><md-icon>desktop_windows</md-icon> Download RDP config</md-button>
       </div>
     </md-content>
 
