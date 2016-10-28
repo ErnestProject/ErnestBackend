@@ -17,10 +17,16 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngMaterial'
+    'ngMaterial',
+    'emguo.poller'
   ])
-  .config(function ($routeProvider, $mdThemingProvider) {
+  .config(function ($routeProvider, $compileProvider, $mdThemingProvider, pollerConfig) {
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|blob):/);
+
     $mdThemingProvider.theme('default').primaryPalette('indigo').accentPalette('blue').warnPalette('red');
+    
+    pollerConfig.smart = true;
+    pollerConfig.resetOn = '$routeChangeStart';
 
     $routeProvider
       .when('/', {

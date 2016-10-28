@@ -8,34 +8,53 @@
  * Controller of the awsinstancesManagerApp
  */
 angular.module('awsinstancesManagerApp')
-  .controller('MainCtrl', function (AWSInstancesMgmtService, $mdDialog, $timeout) {
-  	var self = this;
+  .controller('MainCtrl', function (AWSInstancesMgmtService, $mdDialog, poller) {
+    var self = this;
+
+    var instancesPoller = poller.get(
+      AWSInstancesMgmtService.getAllInstancesResources(),
+      {
+        action: 'query',
+        delay: 5000,
+        idleDelay: 20000
+      }
+    );
+    instancesPoller.promise.then(null, null, function(response) {
+      self.parseInstances(response);
+    });
+
+    this.instances = {
+      running: [],
+      creating: [],
+      deleting: [],
+      unknown:[]
+    };
 
   	this.selectedInstance = null;
-  	this.creatingInstances = [];
-  	this.deletingInstances = [];
 
   	// self.instances = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
-  	this.getInstances = function() {
-  		AWSInstancesMgmtService.getAllInstances().then(function(response) {
-  			self.instances = [];
-  			self.deletingInstances = [];
-  			self.creatingInstances = [];
+    this.parseInstances = function(instances) {
+      self.instances = {
+        running: [],
+        creating: [],
+        deleting: [],
+        unknown:[]
+      };
 
-  			response.data.forEach(function(instance) {
-  				switch (instance.State.Code) {
-  					case 16:
-  						self.instances.push(instance);
-  						break;
-  					case 32:
-  						self.deletingInstances.push(instance);
-  						break;
-  				}
-  			});
-	    });
-  	};
-  	this.getInstances();
+      instances.forEach(function(instance) {
+        switch (instance.State.Code) {
+          case 16:
+            self.instances.running.push(instance);
+            break;
+          case 32:
+            self.instances.deleting.push(instance);
+            break;
+          default:
+            self.instances.unknown.push(instance);
+        }
+      });
+    };
 
     this.selectItem = function(event, item) {
     	if (item.Status === 'creating...') {
@@ -50,7 +69,13 @@ angular.module('awsinstancesManagerApp')
 		    );
     	} else {
     		this.selectedInstance = item;
+        this.selectedInstanceRDPFileURL = this.generateObjectURL(AWSInstancesMgmtService.getInstanceRDPFileContent(this.selectedInstance));
     	}
+    };
+
+    this.generateObjectURL = function(content) {
+      var blob = new Blob([ content ], { type : 'text/plain' });
+      return (window.URL || window.webkitURL).createObjectURL(blob);
     };
 
     this.listItemClass = function(item) {
@@ -72,17 +97,27 @@ angular.module('awsinstancesManagerApp')
 
 	    $mdDialog.show(confirm).then(function() {
 	    	var date = new Date().getTime();
+        /*jshint undef:false */
 	    	var tmpInstance = { InstanceId: 'tmp-' + crc32(date + ''), LaunchTime: {$date: date}, Status: 'creating...' };
-	    	self.creatingInstances.push(tmpInstance);
+        /*jshint undef:true */
+	    	self.instances.creating.push(tmpInstance);
 
-	      AWSInstancesMgmtService.createInstance().then(function(response) {
-	      	var index = self.creatingInstances.indexOf(tmpInstance);
+	      AWSInstancesMgmtService.createInstance().then(function() {
+	      	var index = self.instances.creating.indexOf(tmpInstance);
 	      	if (index > -1) {
-					    self.creatingInstances.splice(index, 1);
+					    self.instances.creating.splice(index, 1);
 					}
-		    	self.getInstances();
 		    });
 	    });
+    };
+
+    this.getFileURL = function(reqFile) {
+      switch(reqFile) {
+        case 'vpn':
+          break;
+        case 'rdp' :
+          return this.selectedInstanceRDPFileURL;
+      }
     };
 
     this.deleteInstance = function(event, instance) {
@@ -95,19 +130,17 @@ angular.module('awsinstancesManagerApp')
           .cancel('Cancel');
       $mdDialog.show(confirm).then(function() {
       	self.selectedInstance = null;
-      	var index = self.instances.indexOf(instance);
+      	var index = self.instances.running.indexOf(instance);
       	if (index > -1) {
-				    self.instances.splice(index, 1);
+				    self.instances.running.splice(index, 1);
 				}
-      	self.deletingInstances.push(instance);
+      	self.instances.deleting.push(instance);
 
-      	AWSInstancesMgmtService.deleteInstance(instance).then(function(response) {
-	      	var index = self.deletingInstances.indexOf(instance);
+      	AWSInstancesMgmtService.deleteInstance(instance).then(function() {
+	      	var index = self.instances.deleting.indexOf(instance);
 	      	if (index > -1) {
-					    self.deletingInstances.splice(index, 1);
+					    self.instances.deleting.splice(index, 1);
 					}
-
-		    	self.getInstances();
 		    });
       });
     };

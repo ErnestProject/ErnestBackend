@@ -55,3 +55,24 @@ md-list-item.selected {
   left: -4px;
   z-index: 1;
 }
+
+
+.key-value-table .key {
+  font-size: 1.2rem;
+  font-weight: 200;
+  display: inline-block;
+  width: 125px;
+  margin: 8px;
+  text-align: right;
+}
+
+.key-value-table .value {
+  /*font-weight: 200;*/
+  display: inline-block;
+  margin: 8px;
+}
+
+.button-bar {
+  margin: 32px;
+}
+
