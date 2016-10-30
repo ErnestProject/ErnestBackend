@@ -28,7 +28,7 @@ EXAMPLES:
 EOF
 }
 
-while getopts ":d:h" flag
+while getopts ":d:e:h" flag
 do
   case "$flag" in
     h)

@@ -11,6 +11,9 @@ RUN apt-get update -y && apt-get install -y nginx
 RUN curl -sL https://deb.nodesource.com/setup_7.x | bash -
 RUN apt-get update -y && apt-get install -y nodejs git
 
+COPY ./dist /app/dist
+COPY ./docker /app/docker
+
 RUN rm -rf /usr/share/nginx/html && mkdir -p /app/dist/ && ln -s /app/dist /usr/share/nginx/html
 WORKDIR /app
 CMD /app/docker/startup.sh

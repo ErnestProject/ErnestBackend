@@ -14,6 +14,7 @@ USAGE: ./docker_startup.sh [OPTIONS]
 OPTIONS:
   -h    Show this message
   -p    Port exposed for application on host (default: 8080)
+  -e    Environnement: dev or prod (default: dev)
 
 EXAMPLES:
 
@@ -30,7 +31,8 @@ EOF
 
 # Defaults
 HOST_PORT=8080
-while getopts ":p:h" flag
+ENV=dev
+while getopts ":p:e:h" flag
 do
   case "$flag" in
     h)
@@ -40,11 +42,18 @@ do
     p)
       HOST_PORT=$OPTARG
       ;;
+    e)
+      ENV=$OPTARG
+      ;;
     ?)
       usage
       exit 1
       ;;
   esac
 done
-
-docker run -dit -v $(pwd):/app -p $HOST_PORT:80 aws-instances-manager /bin/bash docker/startup.sh > .container.tmp
+if ["$ENV" == "prod"]
+then
+  docker run -dit -p $HOST_PORT:80 bastienf/ernest:aws_instances_manager_prod > .container.tmp
+else
+  docker run -dit -v $(pwd):/app -p $HOST_PORT:80 bastienf/ernest:aws_instances_manager_dev > .container.tmp
+fi
