@@ -51,7 +51,7 @@ do
       ;;
   esac
 done
-if ["$ENV" == "prod"]
+if [ "$ENV" == "prod" ]
 then
   docker run -dit -p $HOST_PORT:80 bastienf/ernest:aws_instances_manager_prod > .container.tmp
 else
