@@ -144,4 +144,12 @@ angular.module('awsinstancesManagerApp')
 		    });
       });
     };
+
+    this.steamLogin = function(event, instance) {
+      AWSInstancesMgmtService.steamLogin(instance);
+    };
+
+    this.steamLogout = function(event, instance) {
+      AWSInstancesMgmtService.steamLogout(instance);
+    };
   });

@@ -68,6 +68,14 @@ angular.module('awsinstancesManagerApp')
       return defer.promise;
     };
 
+    this.steamLogin = function(instance) {
+      $http.get('http://alpha12.me/test/login.php');
+    };
+
+    this.steamLogout = function(instance) {
+      $http.get('http://alpha12.me/test/logout.php');
+    };
+
     this.getInstanceRDPFileContent = function(instance) {
       return 'screen mode id:i:2\n' + 
       'use multimon:i:0\n' + 

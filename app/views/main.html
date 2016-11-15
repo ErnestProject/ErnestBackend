@@ -125,6 +125,11 @@
         <md-button class="md-raised" download="{{main.selectedInstance.InstanceId}}.tblk" ng-disabled="true" ng-href="{{ main.getFileURL('vpn') }}"><md-icon>vpn_key</md-icon> Download VPN config</md-button>
         <md-button class="md-raised" download="{{main.selectedInstance.InstanceId}}.rdp" ng-disabled="main.selectedInstance.State.Code !== 16" ng-href="{{ main.getFileURL('rdp') }}"><md-icon>desktop_windows</md-icon> Download RDP config</md-button>
       </div>
+
+      <div class="button-bar" layout="row" layout-align="center fill" flex>
+        <md-button class="md-raised" ng-click="main.steamLogin($event, main.selectedInstance)"><md-icon>play_arrow</md-icon> Steam Login</md-button>
+        <md-button class="md-raised" ng-click="main.steamLogout($event, main.selectedInstance)"><md-icon>stop</md-icon> Steam Logout</md-button>
+      </div>
     </md-content>
 
     <md-content class="no-selected-item-container" ng-if="!main.selectedInstance" flex layout="column" layout-align="center center">
