@@ -41,10 +41,10 @@ angular.module('ernestBackendApp')
       return defer.promise;
     };
 
-    this.requestInstance = function() {
+    this.requestInstance = function(instanceSettings) {
       var defer = $q.defer();
 
-      $http.post(this.apiEndpoint + '/spot_instance_requests').then(function(response) {
+      $http.post(this.apiEndpoint + '/spot_instance_requests', instanceSettings).then(function(response) {
         defer.resolve(response);
       }, function(error) {
         defer.reject(error);

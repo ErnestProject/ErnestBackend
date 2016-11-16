@@ -104,7 +104,7 @@ angular.module('ernestBackendApp')
         );
         
 
-        AWSInstancesMgmtService.requestInstance().then(function(response) {
+        AWSInstancesMgmtService.requestInstance(instanceSettings).then(function(response) {
           var date = new Date().getTime();
           /*jshint undef:false */
           var tmpInstance = { InstanceId: response.SpotInstanceRequestId, LaunchTime: {$date: date}, Status: 'creating...' };
