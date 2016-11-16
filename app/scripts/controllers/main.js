@@ -2,13 +2,13 @@
 
 /**
  * @ngdoc function
- * @name awsinstancesManagerApp.controller:MainCtrl
+ * @name ernestBackendApp.controller:MainCtrl
  * @description
  * # MainCtrl
- * Controller of the awsinstancesManagerApp
+ * Controller of the ernestBackendApp
  */
-angular.module('awsinstancesManagerApp')
-  .controller('MainCtrl', function (AWSInstancesMgmtService, $mdDialog, poller) {
+angular.module('ernestBackendApp')
+  .controller('MainCtrl', function (AWSInstancesMgmtService, $mdDialog, $mdToast, poller) {
     var self = this;
 
     var instancesPoller = poller.get(
@@ -31,8 +31,6 @@ angular.module('awsinstancesManagerApp')
     };
 
   	this.selectedInstance = null;
-
-  	// self.instances = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
     this.parseInstances = function(instances) {
       self.instances = {
@@ -87,28 +85,37 @@ angular.module('awsinstancesManagerApp')
     };
 
     this.createInstance = function(event) {
-    	var confirm = $mdDialog.confirm()
-          .title('Create a new Amazon EC2 Instance?')
-          .textContent('Create and leave alive an Amazon EC2 Instance may cause significant fees.')
-          .ariaLabel('New instance')
-          .targetEvent(event)
-          .ok('Create')
-          .cancel('Cancel');
+      $mdDialog.show({
+        controller: 'CreateInstanceDialogCtrl as dialog',
+        templateUrl: 'views/dialogs/create-instance-dialog.html',
+        parent: angular.element(document.body),
+        targetEvent: event,
+        clickOutsideToClose:true,
+        fullscreen: true
+      })
+      .then(function(instanceSettings) {
+        console.log(instanceSettings);
 
-	    $mdDialog.show(confirm).then(function() {
-	    	var date = new Date().getTime();
-        /*jshint undef:false */
-	    	var tmpInstance = { InstanceId: 'tmp-' + crc32(date + ''), LaunchTime: {$date: date}, Status: 'creating...' };
-        /*jshint undef:true */
-	    	self.instances.creating.push(tmpInstance);
+        $mdToast.show(
+          $mdToast.simple()
+            .textContent('Requesting instance...')
+            .position('bottom right')
+            .hideDelay(0)
+        );
+        
 
-	      AWSInstancesMgmtService.createInstance().then(function() {
-	      	var index = self.instances.creating.indexOf(tmpInstance);
-	      	if (index > -1) {
-					    self.instances.creating.splice(index, 1);
-					}
-		    });
-	    });
+        AWSInstancesMgmtService.requestInstance().then(function(response) {
+          var date = new Date().getTime();
+          /*jshint undef:false */
+          var tmpInstance = { InstanceId: response.SpotInstanceRequestId, LaunchTime: {$date: date}, Status: 'creating...' };
+          /*jshint undef:true */
+          self.instances.creating.push(tmpInstance);
+
+          $mdToast.hide();
+        }, function() {
+          $mdToast.hide();
+        });
+      });
     };
 
     this.getFileURL = function(reqFile) {

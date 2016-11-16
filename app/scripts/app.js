@@ -2,14 +2,14 @@
 
 /**
  * @ngdoc overview
- * @name awsinstancesManagerApp
+ * @name ernestBackendApp
  * @description
- * # awsinstancesManagerApp
+ * # ernestBackendApp
  *
  * Main module of the application.
  */
 angular
-  .module('awsinstancesManagerApp', [
+  .module('ernestBackendApp', [
     'ngAnimate',
     'ngAria',
     'ngCookies',

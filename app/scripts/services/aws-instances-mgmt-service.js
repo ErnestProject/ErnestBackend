@@ -2,14 +2,16 @@
 
 /**
  * @ngdoc service
- * @name awsinstancesManagerApp.AWSInstancesMgmtService
+ * @name ernestBackendApp.AWSInstancesMgmtService
  * @description
  * # AWSInstancesMgmtService
- * Service in the awsinstancesManagerApp.
+ * Service in the ernestBackendApp.
  */
-angular.module('awsinstancesManagerApp')
+angular.module('ernestBackendApp')
   .service('AWSInstancesMgmtService', function ($http, $q, $resource) {
-  	this.apiEndpoint = 'http://localhost:5000';
+  	//this.apiEndpoint = 'http://localhost:5000';
+    this.apiEndpoint = 'http://52.57.135.219';
+    
 
     this.ping = function() {
       var defer = $q.defer();
@@ -31,6 +33,18 @@ angular.module('awsinstancesManagerApp')
     	var defer = $q.defer();
 
       $http.get(this.apiEndpoint + '/instances').then(function(response) {
+        defer.resolve(response);
+      }, function(error) {
+        defer.reject(error);
+      });
+
+      return defer.promise;
+    };
+
+    this.requestInstance = function() {
+      var defer = $q.defer();
+
+      $http.post(this.apiEndpoint + '/spot_instance_requests').then(function(response) {
         defer.resolve(response);
       }, function(error) {
         defer.reject(error);
@@ -69,11 +83,11 @@ angular.module('awsinstancesManagerApp')
     };
 
     this.steamLogin = function(instance) {
-      $http.get('http://alpha12.me/test/login.php');
+      $http.get('http://alpha12.me/test/login.php?iip=' + instance.PublicIpAddress);
     };
 
     this.steamLogout = function(instance) {
-      $http.get('http://alpha12.me/test/logout.php');
+      $http.get('http://alpha12.me/test/logout.php?iip=' + instance.PublicIpAddress);
     };
 
     this.getInstanceRDPFileContent = function(instance) {

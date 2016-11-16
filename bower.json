@@ -1,5 +1,5 @@
 {
-  "name": "awsinstances-manager",
+  "name": "ernest-backend",
   "version": "0.0.0",
   "dependencies": {
     "angular": "^1.4.0",
@@ -18,5 +18,5 @@
     "angular-mocks": "^1.4.0"
   },
   "appPath": "app",
-  "moduleName": "awsinstancesManagerApp"
+  "moduleName": "ernestBackendApp"
 }
