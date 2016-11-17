@@ -28,8 +28,8 @@
                 <h3 flex>{{ request.SpotInstanceRequestId }}</h3>
                 <span class="md-caption">{{request.CreateTime.$date | date: 'MMM d h:mm a'}}</span>
               </div>
-              <h4>{{ request.LaunchSpecification.InstanceType }}</h4>
-              <p>${{ request.SpotPrice | number:2 }}</p>
+              <h4>{{request.LaunchSpecification.Placement.AvailabilityZone}} @ ${{ request.SpotPrice | number:2 }}</h4>
+              <p>{{ request.LaunchSpecification.InstanceType }}</p>
             </div>
           </md-list-item>
         </md-list>
