@@ -44,8 +44,19 @@ md-list {
   padding: 0;
 }
 
+md-list .empty-list-item {
+  text-align: center;
+  color: rgba(0, 0, 0, .38);
+}
+
 .md-avatar-icon.md-green-500 {
   background-color: #4CAF50;
+}
+.md-avatar-icon.md-red-500 {
+  background-color: #F44336;
+}
+.md-avatar-icon.md-orange-500 {
+  background-color: #FF9800;
 }
 
 #leftPanel {

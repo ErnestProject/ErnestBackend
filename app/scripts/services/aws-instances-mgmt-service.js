@@ -9,8 +9,8 @@
  */
 angular.module('ernestBackendApp')
   .service('AWSInstancesMgmtService', function ($http, $q, $resource) {
-  	//this.apiEndpoint = 'http://localhost:5000';
-    this.apiEndpoint = 'http://52.57.135.219';
+  	this.apiEndpoint = 'http://localhost:5000';
+    //this.apiEndpoint = 'http://52.57.135.219';
     
 
     this.ping = function() {
@@ -33,6 +33,23 @@ angular.module('ernestBackendApp')
     	var defer = $q.defer();
 
       $http.get(this.apiEndpoint + '/instances').then(function(response) {
+        defer.resolve(response);
+      }, function(error) {
+        defer.reject(error);
+      });
+
+      return defer.promise;
+    };
+
+
+    this.getAllSpotInstanceRequestsResources = function() {
+      return $resource(this.apiEndpoint + '/spot_instance_requests');
+    };
+    
+    this.getAllSpotInstanceRequests = function() {
+      var defer = $q.defer();
+
+      $http.get(this.apiEndpoint + '/spot_instance_requests').then(function(response) {
         defer.resolve(response);
       }, function(error) {
         defer.reject(error);

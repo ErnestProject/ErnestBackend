@@ -4,8 +4,8 @@
       <md-content layout="column" flex>
         <md-list>
           <md-subheader class="md-primary">Running instances</md-subheader>
-          <md-list-item class="md-3-line" ng-class="main.listItemClass(instance)" ng-repeat="instance in main.instances.running | orderBy: '-LaunchTime.$date'" ng-click="main.selectItem($event, instance)">
-            <md-icon class="md-avatar-icon md-green-500">videogame_asset</md-icon>
+          <md-list-item class="md-3-line" ng-class="main.listItemClass(instance)" ng-repeat="instance in main.instances | orderBy: '-LaunchTime.$date'" ng-click="main.selectItem($event, instance)">
+            <md-icon class="md-avatar-icon" ng-class="main.instanceIconClass(instance)">videogame_asset</md-icon>
             <div class="md-list-item-text" layout="column">
               <div layout="row" layout-align="start end">
                 <h3 flex>{{ instance.InstanceId }}</h3>
@@ -15,48 +15,21 @@
               <p>{{ instance.PublicIpAddress }}</p>
             </div>
           </md-list-item>
-
-
-          <md-subheader class="md-primary" ng-if="main.instances.creating.length > 0">Creating instances</md-subheader>
-          <md-list-item class="md-2-line" ng-class="main.listItemClass(instance)" ng-repeat="instance in main.instances.creating" ng-click="main.selectItem($event, instance)">
-            <div class="md-loading-icon">
-              <md-progress-circular class="md-accent" md-diameter="48"></md-progress-circular>
-              <md-icon class="md-avatar-icon">videogame_asset</md-icon>
-            </div>
-            <div class="md-list-item-text" layout="column">
-              <div layout="row" layout-align="start end">
-                <h3 flex>{{ instance.InstanceId }}</h3>
-                <span class="md-caption">{{instance.LaunchTime.$date | date: 'MMM d h:mm a'}}</span>
-              </div>
-              <p>{{ instance.Status }}</p>
-            </div>
+          <md-list-item ng-if="main.instances.length === 0" ng-disabled="true" class="empty-list-item">
+            <p>No running instances</p>
           </md-list-item>
 
-          <md-subheader class="md-primary" ng-if="main.instances.deleting.length > 0">Deleting instances</md-subheader>
-          <md-list-item class="md-2-line" ng-class="main.listItemClass(instance)" ng-repeat="instance in main.instances.deleting" ng-click="null">
-            <div class="md-loading-icon">
-              <md-progress-circular class="md-accent" md-diameter="48"></md-progress-circular>
-              <md-icon class="md-avatar-icon">videogame_asset</md-icon>
-            </div>
-            <div class="md-list-item-text" layout="column">
-              <div layout="row" layout-align="start end">
-                <h3 flex>{{ instance.InstanceId }}</h3>
-                <span class="md-caption">{{instance.LaunchTime.$date | date: 'MMM d h:mm a'}}</span>
-              </div>
-              <p>Deleting...</p>
-            </div>
-          </md-list-item>
 
-          <md-subheader class="md-primary" ng-if="main.instances.unknown.length > 0">Unknown state instances</md-subheader>
-          <md-list-item class="md-3-line" ng-class="main.listItemClass(instance)" ng-repeat="instance in main.instances.unknown" ng-click="main.selectItem($event, instance)">
-            <md-icon class="md-avatar-icon">help_outline</md-icon>
+          <md-subheader class="md-primary" ng-if="main.spotRequests">Spot requests</md-subheader>
+          <md-list-item class="md-3-line" ng-class="main.listItemClass(request)" ng-repeat="request in main.spotRequests | orderBy: '-CreateTime.$date'" ng-click="main.selectItem($event, request)">
+            <md-icon class="md-avatar-icon" ng-class="main.requestIconClass(request)">schedule</md-icon>
             <div class="md-list-item-text" layout="column">
               <div layout="row" layout-align="start end">
-                <h3 flex>{{ instance.InstanceId }}</h3>
-                <span class="md-caption">{{instance.LaunchTime.$date | date: 'MMM d h:mm a'}}</span>
+                <h3 flex>{{ request.SpotInstanceRequestId }}</h3>
+                <span class="md-caption">{{request.CreateTime.$date | date: 'MMM d h:mm a'}}</span>
               </div>
-              <h4>{{ instance.InstanceType }}</h4>
-              <p>{{ instance.PublicIpAddress }}</p>
+              <h4>{{ request.LaunchSpecification.InstanceType }}</h4>
+              <p>${{ request.SpotPrice | number:2 }}</p>
             </div>
           </md-list-item>
         </md-list>
@@ -90,7 +63,7 @@
           <span class="value">{{main.selectedInstance.LaunchTime.$date | date: 'medium'}}</span>
         </div>
 
-        <div layout="row" layout-align="start center" class="key-value-row">
+        <div layout="row" layout-align="start center" class="key-value-row" ng-if="main.selectedInstance.PublicIpAddress">
           <span class="key">Ip Address</span>
           <span class="value">{{main.selectedInstance.PublicIpAddress}}</span>
         </div>

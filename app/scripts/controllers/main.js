@@ -20,39 +20,26 @@ angular.module('ernestBackendApp')
       }
     );
     instancesPoller.promise.then(null, null, function(response) {
-      self.parseInstances(response);
+      self.instances = response;
     });
 
-    this.instances = {
-      running: [],
-      creating: [],
-      deleting: [],
-      unknown:[]
-    };
+    var spotInstanceRequestsPoller = poller.get(
+      AWSInstancesMgmtService.getAllSpotInstanceRequestsResources(),
+      {
+        action: 'query',
+        delay: 5000,
+        idleDelay: 20000
+      }
+    );
+    spotInstanceRequestsPoller.promise.then(null, null, function(response) {
+      self.spotRequests = response;
+    });
 
+    
+
+    this.instances = [];
+    this.spotRequests = [];
   	this.selectedInstance = null;
-
-    this.parseInstances = function(instances) {
-      self.instances = {
-        running: [],
-        creating: [],
-        deleting: [],
-        unknown:[]
-      };
-
-      instances.forEach(function(instance) {
-        switch (instance.State.Code) {
-          case 16:
-            self.instances.running.push(instance);
-            break;
-          case 32:
-            self.instances.deleting.push(instance);
-            break;
-          default:
-            self.instances.unknown.push(instance);
-        }
-      });
-    };
 
     this.selectItem = function(event, item) {
     	if (item.Status === 'creating...') {
@@ -105,12 +92,7 @@ angular.module('ernestBackendApp')
         
 
         AWSInstancesMgmtService.requestInstance(instanceSettings).then(function(response) {
-          var date = new Date().getTime();
-          /*jshint undef:false */
-          var tmpInstance = { InstanceId: response.SpotInstanceRequestId, LaunchTime: {$date: date}, Status: 'creating...' };
-          /*jshint undef:true */
-          self.instances.creating.push(tmpInstance);
-
+          self.spotRequests.push(response.data);
           $mdToast.hide();
         }, function() {
           $mdToast.hide();
@@ -158,5 +140,39 @@ angular.module('ernestBackendApp')
 
     this.steamLogout = function(event, instance) {
       AWSInstancesMgmtService.steamLogout(instance);
+    };
+
+    this.instanceIconClass = function(instance) {
+      switch (instance.State.Code) {
+        case 16:
+          return 'md-green-500';
+          break;
+        case 32:
+          return 'md-orange-500';
+          break;
+        case 48:
+          return 'md-red-500';
+          break;
+        default:
+          return '';
+      }
+    };
+
+    this.requestIconClass = function(request) {
+      switch (request.State) {
+        case 'active':
+          return 'md-green-500';
+          break;
+        case 'open':
+          return 'md-orange-500';
+          break;
+        case 'cancelled':
+        case 'closed':
+        case 'failed':
+          return 'md-red-500';
+          break;
+        default:
+          return '';
+      }
     };
   });
