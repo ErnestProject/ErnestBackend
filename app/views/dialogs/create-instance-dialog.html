@@ -1,0 +1,43 @@
+<md-dialog aria-label="Create Instance" style="width: 100%; max-width: 50%;">
+  <form ng-cloak>
+		<md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Create instance</h2>
+        <span flex></span>
+        <md-button ng-click="dialog.createInstance()">
+          Create
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+    	<div class="md-dialog-content" layout="column" style="padding-bottom: 0;">
+    		<md-input-container class="md-block">
+	        <label>Type</label>
+	        <md-icon>tune</md-icon>
+	        <md-select ng-model="dialog.instance.type">
+            <md-option ng-repeat="type in dialog.types" value="{{type.value}}">
+              {{type.name}}
+            </md-option>
+          </md-select>
+	      </md-input-container>
+
+	      <md-input-container class="md-block">
+	        <label>Location</label>
+	        <md-icon>place</md-icon>
+	        <md-select ng-model="dialog.instance.location">
+            <md-option ng-repeat="location in dialog.locations" value="{{location.value}}">
+              {{location.name}}
+            </md-option>
+          </md-select>
+	      </md-input-container>
+
+	      <md-input-container class="md-block">
+	        <label>Price</label>
+	        <md-icon>attach_money</md-icon>
+	        <input type="number" step=".01" ng-model="dialog.instance.price">
+	      </md-input-container>
+      </div>
+    </md-dialog-content>
+  </form>
+</md-dialog>

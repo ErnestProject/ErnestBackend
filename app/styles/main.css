@@ -9,12 +9,54 @@ body {
   padding: 0;
 }
 
+
+md-input-container .hint {
+  position: absolute;
+  left: 2px;
+  right: auto;
+  bottom: 7px;
+  
+  font-size: 12px;
+  line-height: 14px;
+  transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+  
+  color: grey;
+}
+md-input-container .hint.ng-hide,
+md-input-container .hint.ng-enter,
+md-input-container .hint.ng-leave.ng-leave-active {
+  bottom: 26px;
+  opacity: 0;
+}
+md-input-container .hint.ng-leave,
+md-input-container .hint.ng-enter.ng-enter-active {
+  bottom: 7px;
+  opacity: 1;
+}
+
+
+.md-dialog-content h2 {
+  padding: 0;
+  margin: 0;
+}
+
 md-list {
   padding: 0;
 }
 
+md-list .empty-list-item {
+  text-align: center;
+  color: rgba(0, 0, 0, .38);
+}
+
 .md-avatar-icon.md-green-500 {
   background-color: #4CAF50;
+}
+.md-avatar-icon.md-red-500 {
+  background-color: #F44336;
+}
+.md-avatar-icon.md-orange-500 {
+  background-color: #FF9800;
 }
 
 #leftPanel {
