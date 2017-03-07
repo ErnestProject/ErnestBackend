@@ -4,3 +4,4 @@
 /.tmp
 /.sass-cache
 /bower_components
+.container.tmp
